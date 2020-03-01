@@ -43,12 +43,10 @@ namespace Automatik
             return page;
         }
 
-
-
         private static IWebElement FindElement(
-            IWebDriver webDriver, 
-            IWebElement webElement, 
-            By by, 
+            IWebDriver webDriver,
+            IWebElement webElement,
+            By by,
             IEnumerable<Func<IWebElement, bool>> conditions
         )
         {
@@ -70,11 +68,10 @@ namespace Automatik
                 return isValid ? localWebElement : null;
             });
         }
-
         private static IEnumerable<IWebElement> FindElements(
-            IWebDriver webDriver, 
-            IWebElement webElement, 
-            By by, 
+            IWebDriver webDriver,
+            IWebElement webElement,
+            By by,
             IEnumerable<Func<IWebElement, bool>> conditions
         )
         {
@@ -97,46 +94,9 @@ namespace Automatik
             });
         }
 
-
         private static void Bind(object obj, IWebDriver webDriver, Func<IWebElement> getParentWebElement)
         {
-            if (obj == null)
-                return;
-
-            var objType = obj.GetType();
-
-            var fields =
-                objType
-                    .GetFields()
-                    .Where(f => f.IsDefined(typeof(FindByAttribute)))
-                    .Select(f =>
-                        new
-                        {
-                            Name = f.Name,
-                            MemberType = f.FieldType,
-                            FindBy = f.GetCustomAttributes<FindByAttribute>(),
-                            WaitUntil = f.GetCustomAttributes<WaitUntilAttribute>(),
-                            SetValue = (Action<object>)((object val) => f.SetValue(obj, val))
-                        });
-
-            var properties =
-                objType
-                    .GetProperties()
-                    .Where(p => p.IsDefined(typeof(FindByAttribute)))
-                    .Select(p =>
-                        new
-                        {
-                            Name = p.Name,
-                            MemberType = p.PropertyType,
-                            FindBy = p.GetCustomAttributes<FindByAttribute>(),
-                            WaitUntil = p.GetCustomAttributes<WaitUntilAttribute>(),
-                            SetValue = (Action<object>)((object val) => p.SetValue(obj, val))
-                        }
-                    );
-
-            var members = fields.Union(properties);
-
-            foreach (var member in members)
+            foreach (var member in MemberInfo.FindOn(obj))
             {
                 if (member.FindBy.Count() > 1)
                     throw new Exception($"Ambiguous amount ({member.FindBy.Count()}) of [FindBy...] attributes for [{member.Name}] field.");
@@ -169,10 +129,10 @@ namespace Automatik
                 if (
                     member.MemberType.IsGenericType &&
                     member.MemberType.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-                    member.MemberType.GenericTypeArguments[0].IsClass == true && 
+                    member.MemberType.GenericTypeArguments[0].IsClass == true &&
                     (
                        member.MemberType.GenericTypeArguments[0].GetConstructor(Type.EmptyTypes) != null ||
-                       member.MemberType.GenericTypeArguments[0].GetConstructor(new [] { typeof(IWebElement) }) != null
+                       member.MemberType.GenericTypeArguments[0].GetConstructor(new[] { typeof(IWebElement) }) != null
                     )
                 )
                 {
@@ -192,7 +152,7 @@ namespace Automatik
                             object[] constructorParams = null;
 
                             if (member.MemberType.GenericTypeArguments[0].GetConstructor(new[] { typeof(IWebElement) }) != null)
-                                constructorParams  = new object[] { webElement };
+                                constructorParams = new object[] { webElement };
 
                             var element = Activator.CreateInstance(member.MemberType.GenericTypeArguments[0], constructorParams);
 
@@ -231,7 +191,7 @@ namespace Automatik
 
                         decorator.Init(() => FindElement(webDriver, getParentWebElement(), currentFindBy, currentWaitConditions));
 
-                        constructorParams  = new object[] { webElement };
+                        constructorParams = new object[] { webElement };
                     }
 
                     var element = Activator.CreateInstance(member.MemberType, constructorParams);
@@ -249,7 +209,6 @@ namespace Automatik
                 throw new Exception($"[{member.Name}] field can not be mapped because it is not: IWebElement, IEnumerable<IWebElement>. Class or IEnumerable<Class> with default constructor or IWebElement constructor param.");
             }
         }
-
     }
 
 
