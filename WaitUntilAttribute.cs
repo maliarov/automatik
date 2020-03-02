@@ -37,4 +37,36 @@ namespace Automatik
         { }
     }
 
+    public class WaitUntilAttributeAbsentAttribute : WaitUntilAttribute
+    {
+        public WaitUntilAttributeAbsentAttribute(string AttributeName)
+            : base((webElement) => webElement.GetAttribute(AttributeName) == null)
+        { 
+        }
+    }
+
+    public class WaitUntilAttributePresentAttribute : WaitUntilAttribute
+    {
+        public WaitUntilAttributePresentAttribute(string AttributeName)
+            : base((webElement) => webElement.GetAttribute(AttributeName) != null)
+        { 
+        }
+    }
+
+    public class WaitUntilClassAbsentAttribute : WaitUntilAttribute
+    {
+        public WaitUntilClassAbsentAttribute(string ClassName)
+            : base((webElement) => Array.IndexOf(webElement.GetAttribute("class").ToString().Split(" "), ClassName) == -1)
+        { 
+        }
+    }
+
+    public class WaitUntilClassPresentAttribute : WaitUntilAttribute
+    {
+        public WaitUntilClassPresentAttribute(string ClassName)
+            : base((webElement) => Array.IndexOf(webElement.GetAttribute("class").ToString().Split(" "), ClassName) > -1)
+        { 
+        }
+    }
+
 }

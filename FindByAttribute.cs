@@ -3,13 +3,22 @@ using OpenQA.Selenium;
 
 namespace Automatik
 {
+    public enum FindByContextType
+    {
+        Relative = 0,
+        Absolute
+    }
+
+
     [AttributeUsage(
-        AttributeTargets.Field | AttributeTargets.Property, 
+        AttributeTargets.Field | AttributeTargets.Property,
         AllowMultiple = false
     )]
     public abstract class FindByAttribute : System.Attribute
     {
         public readonly By By;
+
+        public FindByContextType ContextType { get; set; } = FindByContextType.Relative;
 
         public FindByAttribute(By By)
         {
