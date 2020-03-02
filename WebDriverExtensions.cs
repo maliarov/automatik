@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
@@ -11,6 +12,7 @@ namespace Automatik
 {
     public static class WebDriverExtensions
     {
+        private static readonly Regex UrlPlaceHoldersMatcher = new Regex(@"\{(?<placeholder>.[^}]*)\}");
         public static TPage Navigate<TPage>(this IWebDriver webDriver, string url) where TPage : class
         {
             webDriver.Navigate().GoToUrl(url);
@@ -18,19 +20,102 @@ namespace Automatik
             return webDriver.Bind<TPage>();
         }
 
-        public static TPage Navigate<TPage>(this IWebDriver webDriver) where TPage : class
+        public static TPage Navigate<TPage>(this IWebDriver webDriver, object options = null) where TPage : class
         {
-            var attr = typeof(TPage).GetCustomAttribute<PageAttribute>();
-            if (attr == null)
-                throw new Exception("Navigation url not found. Provide [HttpPage(Url)] attribute for page class or use Navigation<...>(string url) method.");
+            var url = AssembleUrl(typeof(TPage));
 
-            webDriver.Navigate().GoToUrl(attr.Uri.ToString());
+            if (UrlPlaceHoldersMatcher.IsMatch(url))
+            {
+
+                var urlParts = url.Split("?");
+
+                var pathParts =
+                    urlParts.First()
+                        .Split("/")
+                        .Select((param) =>
+                        {
+                            var match = UrlPlaceHoldersMatcher.Match(param);
+
+                            if (!match.Success)
+                                return param;
+
+                            var placeholderName = match.Groups["placeholder"].Value;
+                            if (string.IsNullOrWhiteSpace(placeholderName))
+                                throw new Exception("Invalid url param placeholder.");
+
+                            var placeholderValues =
+                                options?
+                                    .GetType()
+                                    .GetProperties()
+                                    .Where(fi => fi.Name.Equals(placeholderName, StringComparison.OrdinalIgnoreCase))
+                                    .Select(fi => fi.GetValue(options));
+
+                            if (placeholderValues == null || placeholderValues.Any() == false)
+                                throw new Exception($"Url param [{placeholderName}] has no value in options.");
+
+                            return placeholderValues.First().ToString();
+                        });
+
+                var queryParams =
+                    string.Join("", urlParts.Skip(1))
+                        .Split("&")
+                        .Select(q => q.Trim())
+                        .Where(q => !string.IsNullOrWhiteSpace(q))
+                        .Select((queryParam) =>
+                        {
+                            var match = UrlPlaceHoldersMatcher.Match(queryParam);
+
+                            if (!match.Success)
+                                return queryParam;
+
+                            var placeholderName = match.Groups["placeholder"].Value;
+                            if (string.IsNullOrWhiteSpace(placeholderName))
+                                throw new Exception("Invalid url query param placeholder.");
+
+                            var placeholderValues =
+                                options?
+                                    .GetType()
+                                    .GetProperties()
+                                    .Where(fi => fi.Name.Equals(placeholderName, StringComparison.OrdinalIgnoreCase))
+                                    .Select(fi => fi.GetValue(options));
+
+                            if (placeholderValues == null || placeholderValues.Any() == false)
+                                throw new Exception($"Url query param [{placeholderName}] has no value in options.");
+
+                            var queryParamValue = placeholderValues.First();
+
+                            if (queryParamValue == null)
+                                return null;
+
+                            if (queryParamValue == "" || queryParam == string.Empty)
+                                return placeholderName;
+
+                            return $"{placeholderName}={Uri.EscapeDataString(queryParamValue.ToString())}";
+                        })
+                        .Where(qp => qp != null);
+
+                var path = string.Join("/", pathParts);
+                var query = string.Join("&", queryParams);
+
+                url = string.Join("?", path, query);
+            }
+
+            webDriver.Navigate().GoToUrl(url);
 
             return webDriver.Bind<TPage>();
+
+
+            string AssembleUrl(Type pageType)
+            {
+                var attr = pageType.GetCustomAttribute<PageAttribute>();
+                if (attr == null)
+                    throw new Exception($"Navigation url not found. Provide [Page(Url)] attribute for [{pageType.Name}] class or use Navigation<...>(string url) method.");
+
+                return ((attr.ParentPage == null) ? "" : AssembleUrl(attr.ParentPage)) + attr.Url;
+            }
         }
 
-
-        private static TPage Bind<TPage>(this IWebDriver webDriver) where TPage : class
+        public static TPage Bind<TPage>(this IWebDriver webDriver) where TPage : class
         {
             var page = (TPage)Activator.CreateInstance(typeof(TPage));
 
@@ -42,6 +127,18 @@ namespace Automatik
 
             return page;
         }
+
+        public static TPage Bind<TPage>(this IWebDriver webDriver, TPage page) where TPage : class
+        {
+            Bind(
+                page,
+                webDriver,
+                () => webDriver.FindElement(By.TagName("html"))
+            );
+
+            return page;
+        }
+
 
 
         private static IWebElement FindElement(
@@ -142,7 +239,7 @@ namespace Automatik
                     var webElement = DispatchProxy.Create<IWebElement, ResolverDecorator<IWebElement>>();
                     var decorator = (ResolverDecorator<IWebElement>)webElement;
 
-                    decorator.Init(() => FindElement(webDriver, getParentWebElement(), currentFindBy, currentFindByContext , currentWaitConditions));
+                    decorator.Init(() => FindElement(webDriver, getParentWebElement(), currentFindBy, currentFindByContext, currentWaitConditions));
 
                     member.SetValue(webElement);
                     continue;
@@ -153,7 +250,7 @@ namespace Automatik
                     var webElement = DispatchProxy.Create<IEnumerable<IWebElement>, ResolverDecorator<IEnumerable<IWebElement>>>();
                     var decorator = (ResolverDecorator<IEnumerable<IWebElement>>)webElement;
 
-                    decorator.Init(() => FindElements(webDriver, getParentWebElement(), currentFindBy, currentFindByContext , currentWaitConditions));
+                    decorator.Init(() => FindElements(webDriver, getParentWebElement(), currentFindBy, currentFindByContext, currentWaitConditions));
 
                     member.SetValue(webElement);
                     continue;
