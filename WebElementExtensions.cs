@@ -1,5 +1,7 @@
+using System;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 
 namespace Automatik
 {
@@ -7,14 +9,33 @@ namespace Automatik
     public static class WebElementExtensions
     {
 
-        public static void ForceSendKeys(this IWebElement webElement, string text) 
+        public static void SendKeysForce(this IWebElement webElement, string text)
         {
             webElement.Click();
             webElement.SendKeys(text);
 
-            //if (webElement.)
+            if (webElement.GetAttribute("value") == text)
+                return;
 
-            
+            var webDriver = webElement.GetWebDriver();
+            var timeout = webElement.GetWebDriver().Manage().Timeouts().ImplicitWait;
+
+            var wait = new WebDriverWait(webDriver, timeout);
+
+            wait.IgnoreExceptionTypes(typeof(ArgumentException));
+
+            wait.Until((webDriver) =>
+                {
+                    webElement.Clear();
+                    
+                    foreach (var ch in text)
+                       webElement.SendKeys(ch.ToString());
+
+                    if (webElement.GetAttribute("value") != text)
+                        throw new ArgumentException();
+
+                    return true;
+                });
         }
 
         public static IWebDriver GetWebDriver(this IWebElement webElement)

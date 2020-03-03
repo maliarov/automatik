@@ -17,6 +17,13 @@ namespace Automatik
         }
     }
 
+    public class WaitUntilExistsAttribute : WaitUntilAttribute
+    {
+        public WaitUntilExistsAttribute()
+            : base((IWebElement) => true)
+        { }
+    }
+
     public class WaitUntilDisplayedAttribute : WaitUntilAttribute
     {
         public WaitUntilDisplayedAttribute()
