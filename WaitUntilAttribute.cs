@@ -7,7 +7,9 @@ namespace Automatik
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public abstract class WaitUntilAttribute : Attribute
     {
-        public Func<IWebElement, bool> Condition;
+        public readonly Func<IWebElement, bool> Condition;
+
+        public TimeSpan? Timeout { get; set; }
 
         public WaitUntilAttribute(Func<IWebElement, bool> Condition)
         {

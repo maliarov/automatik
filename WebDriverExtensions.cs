@@ -87,7 +87,7 @@ namespace Automatik
                             if (queryParamValue == null)
                                 return null;
 
-                            if (queryParamValue == "" || queryParam == string.Empty)
+                            if (queryParamValue is string && ((string)queryParamValue == "" || (string)queryParamValue == string.Empty))
                                 return placeholderName;
 
                             return $"{placeholderName}={Uri.EscapeDataString(queryParamValue.ToString())}";
@@ -144,15 +144,16 @@ namespace Automatik
         private static IWebElement FindElement(
             IWebDriver webDriver,
             IWebElement webElement,
-            By by,
-            FindByContextType contextType,
-            IEnumerable<Func<IWebElement, bool>> conditions
+            FindByAttribute findByAttribute,
+            IEnumerable<WaitUntilAttribute> waitUntilAttributes
         )
         {
-            if (!conditions.Any())
+            if (waitUntilAttributes == null || !waitUntilAttributes.Any())
                 return findElementByContext();
 
-            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(5));
+            var timeout = waitUntilAttributes.Max(waitUntil => waitUntil.Timeout ?? webDriver.Manage().Timeouts().ImplicitWait);
+
+            var wait = new WebDriverWait(webDriver, timeout);
 
             wait.IgnoreExceptionTypes(
                 typeof(ElementNotInteractableException),
@@ -162,19 +163,19 @@ namespace Automatik
             return wait.Until(webDriver =>
             {
                 var localWebElement = findElementByContext();
-                var isValid = conditions.All(validator => validator(localWebElement));
+                var isValid = waitUntilAttributes.All(waitUntil => waitUntil.Condition(localWebElement));
 
                 return isValid ? localWebElement : null;
             });
 
             IWebElement findElementByContext()
             {
-                switch (contextType)
+                switch (findByAttribute.ContextType)
                 {
                     case FindByContextType.Relative:
-                        return webElement.FindElement(by);
+                        return webElement.FindElement(findByAttribute.By);
                     case FindByContextType.Absolute:
-                        return webDriver.FindElement(by);
+                        return webDriver.FindElement(findByAttribute.By);
                     default:
                         throw new Exception("Unknown find by context type.");
                 }
@@ -183,15 +184,16 @@ namespace Automatik
         private static IEnumerable<IWebElement> FindElements(
             IWebDriver webDriver,
             IWebElement webElement,
-            By by,
-            FindByContextType contextType,
-            IEnumerable<Func<IWebElement, bool>> conditions
+            FindByAttribute findByAttribute,
+            IEnumerable<WaitUntilAttribute> waitUntilAttributes
         )
         {
-            if (!conditions.Any())
+            if (waitUntilAttributes == null || !waitUntilAttributes.Any())
                 return findElementsByContext();
 
-            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(5));
+            var timeout = waitUntilAttributes.Max(waitUntil => waitUntil.Timeout ?? webDriver.Manage().Timeouts().ImplicitWait);
+
+            var wait = new WebDriverWait(webDriver, timeout);
 
             wait.IgnoreExceptionTypes(
                 typeof(ElementNotInteractableException),
@@ -201,7 +203,7 @@ namespace Automatik
             return wait.Until(webDriver =>
             {
                 var localWebElements = findElementsByContext();
-                var isValid = conditions.All(validator => localWebElements.All(validator));
+                var isValid = waitUntilAttributes.All(waitUntil => localWebElements.All(waitUntil.Condition));
 
                 return isValid ? localWebElements : null;
             });
@@ -209,12 +211,12 @@ namespace Automatik
 
             IEnumerable<IWebElement> findElementsByContext()
             {
-                switch (contextType)
+                switch (findByAttribute.ContextType)
                 {
                     case FindByContextType.Relative:
-                        return webElement.FindElements(by);
+                        return webElement.FindElements(findByAttribute.By);
                     case FindByContextType.Absolute:
-                        return webDriver.FindElements(by);
+                        return webDriver.FindElements(findByAttribute.By);
                     default:
                         throw new Exception("Unknown find by context type.");
                 }
@@ -229,17 +231,12 @@ namespace Automatik
                 if (member.FindBy.Count() > 1)
                     throw new Exception($"Ambiguous amount ({member.FindBy.Count()}) of [FindBy...] attributes for [{member.Name}] field.");
 
-                var currentFindByAttr = member.FindBy.First();
-                var currentFindBy = currentFindByAttr.By;
-                var currentFindByContext = currentFindByAttr.ContextType;
-                var currentWaitConditions = member.WaitUntil.Select(a => a.Condition);
-
                 if (member.MemberType == typeof(IWebElement))
                 {
                     var webElement = DispatchProxy.Create<IWebElement, ResolverDecorator<IWebElement>>();
                     var decorator = (ResolverDecorator<IWebElement>)webElement;
 
-                    decorator.Init(() => FindElement(webDriver, getParentWebElement(), currentFindBy, currentFindByContext, currentWaitConditions));
+                    decorator.Init(() => FindElement(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntil));
 
                     member.SetValue(webElement);
                     continue;
@@ -250,7 +247,7 @@ namespace Automatik
                     var webElement = DispatchProxy.Create<IEnumerable<IWebElement>, ResolverDecorator<IEnumerable<IWebElement>>>();
                     var decorator = (ResolverDecorator<IEnumerable<IWebElement>>)webElement;
 
-                    decorator.Init(() => FindElements(webDriver, getParentWebElement(), currentFindBy, currentFindByContext, currentWaitConditions));
+                    decorator.Init(() => FindElements(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntil));
 
                     member.SetValue(webElement);
                     continue;
@@ -273,7 +270,7 @@ namespace Automatik
                     Func<object> resolver = () =>
                     {
                         var collection = Activator.CreateInstance(typeof(List<>).MakeGenericType(member.MemberType.GenericTypeArguments[0]));
-                        var webElements = FindElements(webDriver, getParentWebElement(), currentFindBy, currentFindByContext, currentWaitConditions);
+                        var webElements = FindElements(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntil);
                         var array = Array.CreateInstance(member.MemberType.GenericTypeArguments[0], webElements.Count());
                         var index = 0;
 
@@ -319,7 +316,7 @@ namespace Automatik
                         var webElement = DispatchProxy.Create<IWebElement, ResolverDecorator<IWebElement>>();
                         var decorator = (ResolverDecorator<IWebElement>)webElement;
 
-                        decorator.Init(() => FindElement(webDriver, getParentWebElement(), currentFindBy, currentFindByContext, currentWaitConditions));
+                        decorator.Init(() => FindElement(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntil));
 
                         constructorParams = new object[] { webElement };
                     }
@@ -329,7 +326,7 @@ namespace Automatik
                     Bind(
                         element,
                         webDriver,
-                        () => FindElement(webDriver, getParentWebElement(), currentFindBy, currentFindByContext, currentWaitConditions)
+                        () => FindElement(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntil)
                     );
 
                     member.SetValue(element);
