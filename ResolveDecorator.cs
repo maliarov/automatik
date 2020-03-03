@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Internal;
 
 namespace Automatik
 {
@@ -12,6 +13,8 @@ namespace Automatik
 
         private Func<object> resolver;
 
+        public TValue Value => Resolve();
+        
         public void Init(Func<object> resolver) =>
             this.resolver = resolver;
 

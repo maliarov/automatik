@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
@@ -11,14 +12,17 @@ namespace Automatik
 
         public static void SendKeysForce(this IWebElement webElement, string text)
         {
-            webElement.Click();
             webElement.SendKeys(text);
 
-            if (webElement.GetAttribute("value") == text)
+            if (!new [] {"text", "password", "number", "hidden" }.Contains(webElement.GetAttribute("type")))
+                return;
+
+            var value = webElement.GetAttribute("value");
+            if (value == text)
                 return;
 
             var webDriver = webElement.GetWebDriver();
-            var timeout = webElement.GetWebDriver().Manage().Timeouts().ImplicitWait;
+            var timeout = webDriver.Manage().Timeouts().ImplicitWait;
 
             var wait = new WebDriverWait(webDriver, timeout);
 
@@ -31,7 +35,8 @@ namespace Automatik
                     foreach (var ch in text)
                        webElement.SendKeys(ch.ToString());
 
-                    if (webElement.GetAttribute("value") != text)
+                    var value = webElement.GetAttribute("value");
+                    if (value != text)
                         throw new ArgumentException();
 
                     return true;
@@ -40,9 +45,15 @@ namespace Automatik
 
         public static IWebDriver GetWebDriver(this IWebElement webElement)
         {
-            var element = (RemoteWebElement)webElement;
+            var elementType = webElement.GetType();
+            
+            if (elementType == typeof(RemoteWebElement))
+                return ((RemoteWebElement)webElement).WrappedDriver;
+            
+            if (elementType.BaseType == typeof(ResolverDecorator<IWebElement>))
+                return ((RemoteWebElement)((ResolverDecorator<IWebElement>)(webElement)).Value).WrappedDriver;
 
-            return element.WrappedDriver;
+            throw new Exception("Unsupported web element type.");
         }
 
         public static object GetAttribute(this IWebElement webElement, string name)
