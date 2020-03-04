@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,7 +25,6 @@ namespace Automatik
 
             if (UrlPlaceHoldersMatcher.IsMatch(url))
             {
-
                 var urlParts = url.Split("?");
 
                 var pathParts =
@@ -109,9 +107,24 @@ namespace Automatik
             {
                 var attr = pageType.GetCustomAttribute<PageAttribute>();
                 if (attr == null)
-                    throw new Exception($"Navigation url not found. Provide [Page(Url)] attribute for [{pageType.Name}] class or use Navigation<...>(string url) method.");
+                    throw new Exception($"Navigation url not found. Provide [{typeof(PageAttribute).FullName}] attribute for [{pageType.Name}] class or use Navigation<...>(string url) method.");
 
-                return ((attr.ParentPage == null) ? "" : AssembleUrl(attr.ParentPage)) + attr.Url;
+                var url = attr.Url;
+
+                if (url == null) {
+                    if (attr.UrlProvider == null)
+                        throw new Exception($"Provider [{nameof(PageAttribute.Url)}] or [{nameof(PageAttribute.UrlProvider)}] propertires for [{typeof(PageAttribute).FullName}] attribute.");
+
+                    if (!typeof(IUrlProvider).IsAssignableFrom(attr.UrlProvider))
+                        throw new Exception($"[{nameof(PageAttribute.UrlProvider)}] type in [{typeof(PageAttribute).FullName}] attribute must implements [{typeof(IUrlProvider).FullName}] interface.");
+
+                    url = ((IUrlProvider)Activator.CreateInstance(attr.UrlProvider)).GetUrl(typeof(TPage), webDriver);
+                }
+
+                if (url == null)
+                    throw new Exception($"Neither [{nameof(PageAttribute.Url)}] nor [{nameof(PageAttribute.UrlProvider)}] provided not null string.");
+
+                return ((attr.ParentPage == null) ? "" : AssembleUrl(attr.ParentPage)) + url;
             }
         }
 

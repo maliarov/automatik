@@ -6,14 +6,14 @@ namespace Automatik
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class PageAttribute : Attribute
     {
-        public readonly string Url;
+        public string Url { get; set; }
+
+        public Type UrlProvider { get; set; }
 
         public Type ParentPage { get; set; }
 
-        public PageAttribute(string Url)
+        public PageAttribute()
         {
-            this.Url = Url;
         }
     }
-
 }
