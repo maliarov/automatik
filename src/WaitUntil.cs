@@ -56,11 +56,11 @@ namespace Automatik
         public static bool UntilCollectionHasCount<TElement>(IEnumerable<TElement> collection, int? Min, int? Max) 
         {
             var count = collection.Count();
-    
-            if (Min.HasValue && count <= Min.Value)
+
+            if (Min.HasValue && count < Min.Value)
                 return false;
 
-            if (Max.HasValue && Max.Value >= count)
+            if (Max.HasValue && Max.Value > count)
                 return false;
 
             return true;           

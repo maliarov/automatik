@@ -13,6 +13,7 @@ namespace Automatik
 
         public IEnumerable<FindByAttribute> FindBy { get; set; }
 
+        public IEnumerable<WaitUntilCollectionAttribute> WaitUntilCollection { get; set; }
         public IEnumerable<WaitUntilAttribute> WaitUntil { get; set; }
 
         public Action<object> SetValue { get; set; }
@@ -36,6 +37,7 @@ namespace Automatik
                             Name = f.Name,
                             MemberType = f.FieldType,
                             FindBy = f.GetCustomAttributes<FindByAttribute>(),
+                            WaitUntilCollection = f.GetCustomAttributes<WaitUntilCollectionAttribute>(),
                             WaitUntil = f.GetCustomAttributes<WaitUntilAttribute>(),
                             SetValue = (Action<object>)((object val) => f.SetValue(obj, val)),
                             GetValue = (Func<object>)(() => f.GetValue(obj))
@@ -51,6 +53,7 @@ namespace Automatik
                             Name = p.Name,
                             MemberType = p.PropertyType,
                             FindBy = p.GetCustomAttributes<FindByAttribute>(),
+                            WaitUntilCollection = p.GetCustomAttributes<WaitUntilCollectionAttribute>(),
                             WaitUntil = p.GetCustomAttributes<WaitUntilAttribute>(),
                             SetValue = (Action<object>)((object val) => p.SetValue(obj, val)),
                             GetValue = (Func<object>)(() => p.GetValue(obj))

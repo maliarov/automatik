@@ -111,7 +111,8 @@ namespace Automatik
 
                 var url = attr.Url;
 
-                if (url == null) {
+                if (url == null)
+                {
                     if (attr.UrlProvider == null)
                         throw new Exception($"Provider [{nameof(PageAttribute.Url)}] or [{nameof(PageAttribute.UrlProvider)}] propertires for [{typeof(PageAttribute).FullName}] attribute.");
 
@@ -198,13 +199,19 @@ namespace Automatik
             IWebDriver webDriver,
             IWebElement webElement,
             FindByAttribute findByAttribute,
+            IEnumerable<WaitUntilCollectionAttribute> waitUntilCollectionAttributes,
             IEnumerable<WaitUntilAttribute> waitUntilAttributes
         )
         {
-            if (waitUntilAttributes == null || !waitUntilAttributes.Any())
+            if (
+                (waitUntilCollectionAttributes == null || !waitUntilCollectionAttributes.Any()) &&
+                (waitUntilAttributes == null || !waitUntilAttributes.Any())
+            )
                 return findElementsByContext();
 
-            var timeout = waitUntilAttributes.Max(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var collectionTimeouts = waitUntilCollectionAttributes.Select(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var elementTimeouts = waitUntilAttributes.Select(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var timeout = collectionTimeouts.Union(elementTimeouts).Max();
 
             var wait = new WebDriverWait(webDriver, timeout);
 
@@ -216,8 +223,8 @@ namespace Automatik
             return wait.Until(webDriver =>
             {
                 var localWebElements = findElementsByContext();
-                var isValid = 
-
+                var isValid =
+                    waitUntilCollectionAttributes.All(waitUntil => waitUntil.Condition(localWebElements)) &&
                     waitUntilAttributes.All(waitUntil => localWebElements.All(waitUntil.Condition));
 
                 return isValid ? localWebElements : null;
@@ -262,7 +269,7 @@ namespace Automatik
                     var webElement = DispatchProxy.Create<IEnumerable<IWebElement>, ResolverDecorator<IEnumerable<IWebElement>>>();
                     var decorator = (ResolverDecorator<IEnumerable<IWebElement>>)webElement;
 
-                    decorator.Init(() => FindElements(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntil));
+                    decorator.Init(() => FindElements(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntilCollection, member.WaitUntil));
 
                     member.SetValue(webElement);
                     continue;
@@ -285,7 +292,7 @@ namespace Automatik
                     Func<object> resolver = () =>
                     {
                         var collection = Activator.CreateInstance(typeof(List<>).MakeGenericType(member.MemberType.GenericTypeArguments[0]));
-                        var webElements = FindElements(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntil);
+                        var webElements = FindElements(webDriver, getParentWebElement(), member.FindBy.First(), member.WaitUntilCollection, member.WaitUntil);
                         var array = Array.CreateInstance(member.MemberType.GenericTypeArguments[0], webElements.Count());
                         var index = 0;
 

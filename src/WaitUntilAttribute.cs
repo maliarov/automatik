@@ -3,40 +3,9 @@ using OpenQA.Selenium;
 
 namespace Automatik
 {
-
-    public enum TimeoutDimension
-    {
-        Minutes,
-        Seconds,
-        Miliseconds
-    }
-
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public abstract class WaitUntilAttribute : Attribute
+   public abstract class WaitUntilAttribute : WaitAttribute
     {
         public readonly Func<IWebElement, bool> Condition;
-
-        public uint TimeoutInterval { get; set; }
-        public TimeoutDimension TimeoutDimension { get; set; } = TimeoutDimension.Seconds;
-
-        public TimeSpan? GetTimeout()
-        {
-            if (TimeoutInterval == 0)
-                return null;
-
-            switch (TimeoutDimension)
-            {
-                case TimeoutDimension.Minutes:
-                    return TimeSpan.FromMinutes(TimeoutInterval);
-                case TimeoutDimension.Seconds:
-                    return TimeSpan.FromSeconds(TimeoutInterval);
-                case TimeoutDimension.Miliseconds:
-                    return TimeSpan.FromMilliseconds(TimeoutInterval);
-
-                default:
-                    return null;
-            }
-        }
 
         public WaitUntilAttribute(Func<IWebElement, bool> Condition)
         {
