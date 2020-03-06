@@ -164,7 +164,7 @@ namespace Automatik
             if (waitUntilAttributes == null || !waitUntilAttributes.Any())
                 return findElementByContext();
 
-            var timeout = waitUntilAttributes.Max(waitUntil => waitUntil.Timeout ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var timeout = waitUntilAttributes.Max(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
 
             var wait = new WebDriverWait(webDriver, timeout);
 
@@ -204,7 +204,7 @@ namespace Automatik
             if (waitUntilAttributes == null || !waitUntilAttributes.Any())
                 return findElementsByContext();
 
-            var timeout = waitUntilAttributes.Max(waitUntil => waitUntil.Timeout ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var timeout = waitUntilAttributes.Max(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
 
             var wait = new WebDriverWait(webDriver, timeout);
 
@@ -216,7 +216,9 @@ namespace Automatik
             return wait.Until(webDriver =>
             {
                 var localWebElements = findElementsByContext();
-                var isValid = waitUntilAttributes.All(waitUntil => localWebElements.All(waitUntil.Condition));
+                var isValid = 
+
+                    waitUntilAttributes.All(waitUntil => localWebElements.All(waitUntil.Condition));
 
                 return isValid ? localWebElements : null;
             });
