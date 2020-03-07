@@ -6,9 +6,9 @@ namespace Automatik
 {
     public abstract class WaitUntilCollectionAttribute : WaitAttribute
     {
-        public Func<IEnumerable<IWebElement>, bool> Condition;
+        public Func<Func<IEnumerable<IWebElement>>, bool> Condition;
 
-        public WaitUntilCollectionAttribute(Func<IEnumerable<IWebElement>, bool> Condition)
+        public WaitUntilCollectionAttribute(Func<Func<IEnumerable<IWebElement>>, bool> Condition)
         {
             this.Condition = Condition;
         }
@@ -17,25 +17,25 @@ namespace Automatik
     public class WaitUntilCollectionHasAnyAttribute : WaitUntilCollectionAttribute
     {
         public WaitUntilCollectionHasAnyAttribute()
-            : base((webElements) => Wait.UntilCollectionHasCount(webElements, null, 1)) { }
+            : base((webElements) => Wait.Until.CollectionHasCount(null, 1)(webElements)) { }
     }
 
     public class WaitUntilCollectionHasAtLeastAttribute : WaitUntilCollectionAttribute
     {
-        public WaitUntilCollectionHasAtLeastAttribute(int NElements)
-            : base((webElements) => Wait.UntilCollectionHasCount(webElements, null, NElements)) { }
+        public WaitUntilCollectionHasAtLeastAttribute(int Elements)
+            : base((webElements) => Wait.Until.CollectionHasCount(null, Elements)(webElements)) { }
     }
 
     public class WaitUntilCollectionHasLessThenAttribute : WaitUntilCollectionAttribute
     {
-        public WaitUntilCollectionHasLessThenAttribute(int NElements)
-            : base((webElements) => Wait.UntilCollectionHasCount(webElements, NElements, null)) { }
+        public WaitUntilCollectionHasLessThenAttribute(int Elements)
+            : base((webElements) => Wait.Until.CollectionHasCount(Elements, null)(webElements)) { }
     }
 
     public class WaitUntilCollectionCountInRangeAttribute : WaitUntilCollectionAttribute
     {
         public WaitUntilCollectionCountInRangeAttribute(int Min, int Max)
-            : base((webElements) => Wait.UntilCollectionHasCount(webElements, Min, Max)) { }
+            : base((webElements) => Wait.Until.CollectionHasCount(Min, Max)(webElements)) { }
     }
 
 }

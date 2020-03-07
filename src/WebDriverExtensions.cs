@@ -176,10 +176,9 @@ namespace Automatik
 
             return wait.Until(webDriver =>
             {
-                var localWebElement = findElementByContext();
-                var isValid = waitUntilAttributes.All(waitUntil => waitUntil.Condition(localWebElement));
+                var isValid = waitUntilAttributes.All(waitUntil => waitUntil.Condition(() => findElementByContext()));
 
-                return isValid ? localWebElement : null;
+                return isValid ? findElementByContext() : null;
             });
 
             IWebElement findElementByContext()
@@ -222,12 +221,11 @@ namespace Automatik
 
             return wait.Until(webDriver =>
             {
-                var localWebElements = findElementsByContext();
                 var isValid =
-                    waitUntilCollectionAttributes.All(waitUntil => waitUntil.Condition(localWebElements)) &&
-                    waitUntilAttributes.All(waitUntil => localWebElements.All(waitUntil.Condition));
+                    waitUntilCollectionAttributes.All(waitUntil => waitUntil.Condition(() => findElementsByContext())) &&
+                    waitUntilAttributes.All(waitUntil => (findElementsByContext()?.All(e => waitUntil.Condition(() => e)) ?? true) == true);
 
-                return isValid ? localWebElements : null;
+                return isValid ? findElementsByContext() : null;
             });
 
 

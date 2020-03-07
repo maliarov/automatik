@@ -5,68 +5,72 @@ using OpenQA.Selenium;
 
 namespace Automatik
 {
-    public static class Wait
+    public static partial class Wait
     {
-        public static bool UntilExists(IWebElement webElement) => 
-            webElement != null;
-        public static bool UntilNotExists(IWebElement webElement) => 
-            webElement == null;
- 
-        public static bool UntilSelected(IWebElement webElement) => 
-            webElement.Selected;
-        public static bool UntilDisplayed(IWebElement webElement) => 
-            webElement.Displayed;
-        public static bool UntilEnabled(IWebElement webElement) => 
-            webElement.Enabled;
-        public static bool UntilClickable(IWebElement webElement) => 
-            UntilDisplayed(webElement) && UntilEnabled(webElement);
-
-        public static bool UntilAttributeAbsent(IWebElement webElement, string AttributeName) => 
-            webElement.GetAttribute(AttributeName) == null;
-        public static bool UntilAttributePresent(IWebElement webElement, string AttributeName) => 
-            webElement.GetAttribute(AttributeName) != null;
-        public static bool UntilAttributeContains(IWebElement webElement, string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.GetAttribute(AttributeName)?.Contains(Value, comparisonType) == true;
-        public static bool UntilAttributeNotContains(IWebElement webElement, string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.GetAttribute(AttributeName)?.Contains(Value, comparisonType) == false;
-        public static bool UntilAttributeEquals(IWebElement webElement, string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.GetAttribute(AttributeName)?.Equals(Value, comparisonType) == true;
-        public static bool UntilAttributeNotEquals(IWebElement webElement, string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.GetAttribute(AttributeName)?.Equals(Value, comparisonType) == false;
-
-
-        public static bool UntilTextContains(IWebElement webElement, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.Text?.Contains(Value, comparisonType) == true;
-        public static bool UntilTextNotContains(IWebElement webElement, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.Text?.Contains(Value, comparisonType) == false;
-
-        public static bool UntilTextEquals(IWebElement webElement, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.Text?.Equals(Value, comparisonType) == true;
-        public static bool UntilTextNotEquals(IWebElement webElement, string Value, StringComparison comparisonType = StringComparison.Ordinal) => 
-            webElement.Text?.Equals(Value, comparisonType) == false;
-
-
-        public static bool WaitUntilClassAbsentAttribute(IWebElement webElement, string ClassName) => 
-            Array.IndexOf(webElement.GetAttribute("class").ToString().Split(" "), ClassName) == -1;
-        public static bool WaitUntilClassPresentAttribute(IWebElement webElement, string ClassName) => 
-            Array.IndexOf(webElement.GetAttribute("class").ToString().Split(" "), ClassName) != -1;
-
-
-
-        public static bool UntilCollectionHasCount<TElement>(IEnumerable<TElement> collection, int? Min, int? Max) 
+        public static class Until
         {
-            var count = collection.Count();
+            public static Func<Func<IWebElement>, bool> Exists() =>
+                (resolve) => resolve() != null;
+            public static Func<Func<IWebElement>, bool> NotExists() =>
+                (resolve) => resolve() == null;
 
-            if (Min.HasValue && count < Min.Value)
-                return false;
+            public static Func<Func<IWebElement>, bool> Selected() =>
+                (resolve) => resolve()?.Selected == true;
+            public static Func<Func<IWebElement>, bool> Displayed() =>
+                (resolve) => resolve()?.Displayed == true;
+            public static Func<Func<IWebElement>, bool> Enabled() =>
+                (resolve) => resolve()?.Enabled == true;
+            public static Func<Func<IWebElement>, bool> Clickable() =>
+                (resolve) => Displayed()(resolve) && Enabled()(resolve);
 
-            if (Max.HasValue && Max.Value > count)
-                return false;
+            public static Func<Func<IWebElement>, bool> AttributeAbsent(string AttributeName) =>
+                (resolve) => resolve()?.GetAttribute(AttributeName) == null;
+            public static Func<Func<IWebElement>, bool> AttributePresent(string AttributeName) =>
+                (resolve) => resolve()?.GetAttribute(AttributeName) != null;
+            public static Func<Func<IWebElement>, bool> AttributeContains(string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.GetAttribute(AttributeName)?.Contains(Value, comparisonType) == true;
+            public static Func<Func<IWebElement>, bool> AttributeNotContains(string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.GetAttribute(AttributeName)?.Contains(Value, comparisonType) == false;
+            public static Func<Func<IWebElement>, bool> AttributeEquals(string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.GetAttribute(AttributeName)?.Equals(Value, comparisonType) == true;
+            public static Func<Func<IWebElement>, bool> AttributeNotEquals(string AttributeName, string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.GetAttribute(AttributeName)?.Equals(Value, comparisonType) == false;
 
-            return true;           
+
+            public static Func<Func<IWebElement>, bool> TextContains(string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.Text?.Contains(Value, comparisonType) == true;
+            public static Func<Func<IWebElement>, bool> TextNotContains(string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.Text?.Contains(Value, comparisonType) == false;
+
+            public static Func<Func<IWebElement>, bool> TextEquals(string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.Text?.Equals(Value, comparisonType) == true;
+            public static Func<Func<IWebElement>, bool> TextNotEquals(string Value, StringComparison comparisonType = StringComparison.Ordinal) =>
+                (resolve) => resolve()?.Text?.Equals(Value, comparisonType) == false;
+
+
+            public static Func<Func<IWebElement>, bool> ClassAbsentAttribute(string ClassName) =>
+                (resolve) => Array.IndexOf((resolve()?.GetAttribute("class").ToString() ?? "").Split(" "), ClassName) == -1;
+            public static Func<Func<IWebElement>, bool> ClassPresentAttribute(string ClassName) =>
+                (resolve) => Array.IndexOf((resolve()?.GetAttribute("class").ToString() ?? "").Split(" "), ClassName) != -1;
+
+
+
+            public static Func<Func<IEnumerable<IWebElement>>, bool> CollectionHasCount(int? Min, int? Max) =>
+                (Func<Func<IEnumerable<IWebElement>>, bool>)((resolve) =>
+                {
+                    var count = resolve()?.Count();
+
+                    if (!count.HasValue)
+                        return false;
+
+                    if (Min.HasValue && count < Min.Value)
+                        return false;
+
+                    if (Max.HasValue && Max.Value > count)
+                        return false;
+
+                    return true;
+                });
         }
     }
-
-
-
 }
