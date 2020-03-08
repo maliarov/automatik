@@ -15,98 +15,98 @@ namespace Automatik
 
     public class WaitUntilExistsAttribute : WaitUntilAttribute
     {
-        public WaitUntilExistsAttribute() : base(Wait.Until.Exists()) { }
+        public WaitUntilExistsAttribute() : base(Until.Exists()) { }
     }
 
     public class WaitUntilNotExistsAttribute : WaitUntilAttribute
     {
-        public WaitUntilNotExistsAttribute() : base(Wait.Until.NotExists()) { }
+        public WaitUntilNotExistsAttribute() : base(Until.NotExists()) { }
     }
 
     public class WaitUntilEnabledAttribute : WaitUntilAttribute
     {
-        public WaitUntilEnabledAttribute() : base(Wait.Until.Enabled()) { }
+        public WaitUntilEnabledAttribute() : base(Until.Enabled()) { }
     }
 
     public class WaitUntilDisplayedAttribute : WaitUntilAttribute
     {
-        public WaitUntilDisplayedAttribute() : base(Wait.Until.Displayed()) { }
+        public WaitUntilDisplayedAttribute() : base(Until.Displayed()) { }
     }
 
     public class WaitUntilSelectedAttribute : WaitUntilAttribute
     {
-        public WaitUntilSelectedAttribute() : base(Wait.Until.Selected()) { }
+        public WaitUntilSelectedAttribute() : base(Until.Selected()) { }
     }
 
     public class WaitUntilClickableAttribute : WaitUntilAttribute
     {
-        public WaitUntilClickableAttribute() : base(Wait.Until.Clickable()) { }
+        public WaitUntilClickableAttribute() : base(Until.Clickable()) { }
     }
 
     public class WaitUntilAttributeAbsentAttribute : WaitUntilAttribute
     {
         public WaitUntilAttributeAbsentAttribute(string AttributeName)
-            : base((webElement) => Wait.Until.AttributeAbsent(AttributeName)(webElement)) { }
+            : base(Until.AttributeAbsent(AttributeName)) { }
     }
 
     public class WaitUntilAttributePresentAttribute : WaitUntilAttribute
     {
         public WaitUntilAttributePresentAttribute(string AttributeName)
-            : base((webElement) => Wait.Until.AttributePresent(AttributeName)(webElement)) { }
+            : base(Until.AttributePresent(AttributeName)) { }
     }
 
     public class WaitUntilAttributeContainsAttribute : WaitUntilAttribute
     {
         public WaitUntilAttributeContainsAttribute(string AttributeName, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.AttributeContains(AttributeName, Value, ComparisonType)(webElement)) { }
+            : base(Until.AttributeContains(AttributeName, Value, ComparisonType)) { }
     }
     public class WaitUntilAttributeNotContainsAttribute : WaitUntilAttribute
     {
         public WaitUntilAttributeNotContainsAttribute(string AttributeName, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.AttributeNotContains(AttributeName, Value, ComparisonType)(webElement)) { }
+            : base(Until.AttributeNotContains(AttributeName, Value, ComparisonType)) { }
     }
     public class WaitUntilAttributeEqualsAttribute : WaitUntilAttribute
     {
         public WaitUntilAttributeEqualsAttribute(string AttributeName, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.AttributeEquals(AttributeName, Value, ComparisonType)(webElement)) { }
+            : base(Until.AttributeEquals(AttributeName, Value, ComparisonType)) { }
     }
     public class WaitUntilAttributeNotEqualsAttribute : WaitUntilAttribute
     {
         public WaitUntilAttributeNotEqualsAttribute(string AttributeName, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.AttributeNotEquals(AttributeName, Value, ComparisonType)(webElement)) { }
+            : base(Until.AttributeNotEquals(AttributeName, Value, ComparisonType)) { }
     }
 
 
     public class WaitUntilTextContainsAttribute : WaitUntilAttribute
     {
         public WaitUntilTextContainsAttribute(string Value, StringComparison comparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.TextContains(Value, comparisonType)(webElement)) { }
+            : base(Until.TextContains(Value, comparisonType)) { }
     }
     public class WaitUntilTextNotContainsAttribute : WaitUntilAttribute
     {
         public WaitUntilTextNotContainsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.TextNotContains(Value, ComparisonType)(webElement)) { }
+            : base(Until.TextNotContains(Value, ComparisonType)) { }
     }
     public class WaitUntilTextEqualsAttribute : WaitUntilAttribute
     {
         public WaitUntilTextEqualsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.TextEquals(Value, ComparisonType)(webElement)) { }
+            : base(Until.TextEquals(Value, ComparisonType)) { }
     }
     public class WaitUntilTextNotEqualsAttribute : WaitUntilAttribute
     {
         public WaitUntilTextNotEqualsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base((webElement) => Wait.Until.TextNotEquals(Value, ComparisonType)(webElement)) { }
+            : base(Until.TextNotEquals(Value, ComparisonType)) { }
     }
 
     public class WaitUntilClassAbsentAttribute : WaitUntilAttribute
     {
         public WaitUntilClassAbsentAttribute(string ClassName)
-            : base((webElement) => Wait.Until.ClassAbsentAttribute(ClassName)(webElement)) { }
+            : base(Until.ClassAbsentAttribute(ClassName)) { }
     }
 
     public class WaitUntilClassPresentAttribute : WaitUntilAttribute
     {
         public WaitUntilClassPresentAttribute(string ClassName)
-            : base((webElement) => Wait.Until.ClassPresentAttribute(ClassName)(webElement)) { }
+            : base(Until.ClassPresentAttribute(ClassName)) { }
     }
 }

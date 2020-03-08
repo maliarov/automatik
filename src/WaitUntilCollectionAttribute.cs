@@ -17,25 +17,25 @@ namespace Automatik
     public class WaitUntilCollectionHasAnyAttribute : WaitUntilCollectionAttribute
     {
         public WaitUntilCollectionHasAnyAttribute()
-            : base((webElements) => Wait.Until.CollectionHasCount(null, 1)(webElements)) { }
+            : base(Until.CollectionHasCount(null, 1)) { }
     }
 
     public class WaitUntilCollectionHasAtLeastAttribute : WaitUntilCollectionAttribute
     {
         public WaitUntilCollectionHasAtLeastAttribute(int Elements)
-            : base((webElements) => Wait.Until.CollectionHasCount(null, Elements)(webElements)) { }
+            : base(Until.CollectionHasCount(null, Elements)) { }
     }
 
     public class WaitUntilCollectionHasLessThenAttribute : WaitUntilCollectionAttribute
     {
         public WaitUntilCollectionHasLessThenAttribute(int Elements)
-            : base((webElements) => Wait.Until.CollectionHasCount(Elements, null)(webElements)) { }
+            : base(Until.CollectionHasCount(Elements, null)) { }
     }
 
     public class WaitUntilCollectionCountInRangeAttribute : WaitUntilCollectionAttribute
     {
         public WaitUntilCollectionCountInRangeAttribute(int Min, int Max)
-            : base((webElements) => Wait.Until.CollectionHasCount(Min, Max)(webElements)) { }
+            : base(Until.CollectionHasCount(Min, Max)) { }
     }
 
 }

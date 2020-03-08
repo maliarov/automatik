@@ -1,11 +1,8 @@
 using System;
 using System.Reflection;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Internal;
 
 namespace Automatik
 {
-
     public class ResolverDecorator<TValue> : DispatchProxy
         where TValue : class
     {
@@ -31,8 +28,13 @@ namespace Automatik
             return this.resolvedValueInstance;
         }
 
-        protected override object Invoke(MethodInfo targetMethod, object[] args) =>
-            targetMethod.Invoke(Resolve(), args);
+        protected override object Invoke(MethodInfo targetMethod, object[] args) {
+            try {            
+                return targetMethod.Invoke(Resolve(), args);
+            } catch (TargetInvocationException exception) {
+                throw exception.InnerException;
+            }
+        }
     }
 
 
