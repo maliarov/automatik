@@ -82,7 +82,7 @@ namespace Automatik
             (resolve) => h(() => Array.IndexOf((resolve().GetAttribute("class") ?? "").Split(" "), ClassName) != -1, false);
 
 
-        public static Func<Func<IEnumerable<IWebElement>>, bool> CollectionHasCount(int? Min, int? Max)
+        public static Func<Func<IEnumerable<IWebElement>>, bool> ElementsHaveCount(int? Min, int? Max)
         {
             if (Min.HasValue && Max.HasValue && Min > Max)
                 throw new Exception("[Min] param should be less or equal to [Max] param");

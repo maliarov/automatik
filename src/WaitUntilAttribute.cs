@@ -3,14 +3,10 @@ using OpenQA.Selenium;
 
 namespace Automatik
 {
-   public abstract class WaitUntilAttribute : WaitAttribute
+    public abstract class WaitUntilAttribute : WaitElementAttribute
     {
-        public readonly Func<Func<IWebElement>, bool> Condition;
-
-        public WaitUntilAttribute(Func<Func<IWebElement>, bool> Condition)
-        {
-            this.Condition = Condition;
-        }
+        public WaitUntilAttribute(Func<Func<IWebElement>, bool> Condition) 
+            : base(Condition) { }
     }
 
     public class WaitUntilExistsAttribute : WaitUntilAttribute
