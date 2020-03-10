@@ -33,7 +33,7 @@ namespace Automatik
     public class WaitForElementToBecomeDisplayedAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeDisplayedAttribute()
-            : base(To.BecomeDisabled()) { }
+            : base(To.BecomeDisplayed()) { }
     }
 
     public class WaitForElementToBecomeHiddenAttribute : WaitForElementToAttribute

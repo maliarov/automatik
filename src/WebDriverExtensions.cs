@@ -162,7 +162,7 @@ namespace Automatik
             IEnumerable<WaitAttribute> waitAttributes
         )
         {
-            var waitElementAtrributes = waitAttributes?.Cast<WaitForElementAttribute>();
+            var waitElementAtrributes = waitAttributes?.Where(attr => attr is WaitForElementAttribute).Cast<WaitForElementAttribute>();
             if (waitElementAtrributes == null || !waitElementAtrributes.Any())
                 return findElementByContext();
 
@@ -194,8 +194,13 @@ namespace Automatik
             IEnumerable<WaitAttribute> waitAttributes
         )
         {
-            var waitElementsAtrributes = waitAttributes?.Cast<WaitForElementsAttribute>();
-            var waitElementAtrributes = waitAttributes?.Cast<WaitForElementAttribute>();
+            var waitElementsAtrributes = waitAttributes?
+                .Where(attr => attr is WaitForElementsAttribute)
+                .Cast<WaitForElementsAttribute>();
+
+            var waitElementAtrributes = waitAttributes?
+                .Where(attr => attr is WaitForElementAttribute)
+                .Cast<WaitForElementAttribute>();
 
             if (
                 (waitElementsAtrributes == null || !waitElementsAtrributes.Any()) &&
@@ -261,6 +266,16 @@ namespace Automatik
                     continue;
                 }
 
+                var propertyWithIWebElementType = member.MemberType.GetProperties()
+                    .FirstOrDefault(pi =>
+                        pi.PropertyType == typeof(IWebElement) &&
+                        pi.GetCustomAttribute<FindByAttribute>() == null &&
+                        pi.GetCustomAttribute<WaitAttribute>() == null &&
+                        pi.CanWrite &&
+                        pi.Name == "WebElement"
+                    );
+                var hasPropertyWithIWebElementType = propertyWithIWebElementType != null;
+
                 if (
                     member.MemberType.IsGenericType &&
                     member.MemberType.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
@@ -271,6 +286,9 @@ namespace Automatik
                     )
                 )
                 {
+                    var hasDefaultConstructor = member.MemberType.GenericTypeArguments[0].GetConstructor(Type.EmptyTypes) != null;
+                    var hasConstructorWithIWebElementParam = member.MemberType.GenericTypeArguments[0].GetConstructor(new[] { typeof(IWebElement) }) != null;
+
                     var resolverDecoratorType = typeof(ResolverDecorator<>).MakeGenericType(member.MemberType);
                     var Create = typeof(DispatchProxy).GetMethod("Create").MakeGenericMethod(member.MemberType, resolverDecoratorType);
                     var Init = resolverDecoratorType.GetMethod("Init");
@@ -286,10 +304,13 @@ namespace Automatik
                         {
                             object[] constructorParams = null;
 
-                            if (member.MemberType.GenericTypeArguments[0].GetConstructor(new[] { typeof(IWebElement) }) != null)
+                            if (hasConstructorWithIWebElementParam)
                                 constructorParams = new object[] { webElement };
 
                             var element = Activator.CreateInstance(member.MemberType.GenericTypeArguments[0], constructorParams);
+
+                            if (hasPropertyWithIWebElementType)
+                                propertyWithIWebElementType.SetValue(element, webElement);
 
                             Bind(element, webDriver, () => webElement);
 
@@ -309,6 +330,7 @@ namespace Automatik
                     continue;
                 }
 
+
                 if (
                     member.MemberType.IsClass &&
                     (
@@ -317,19 +339,28 @@ namespace Automatik
                     )
                 )
                 {
+                    var hasDefaultConstructor = member.MemberType.GetConstructor(Type.EmptyTypes) != null;
+                    var hasConstructorWithIWebElementParam = member.MemberType.GetConstructor(new[] { typeof(IWebElement) }) != null;
+
+                    IWebElement webElement = null;
                     object[] constructorParams = null;
 
-                    if (member.MemberType.GetConstructor(new[] { typeof(IWebElement) }) != null)
+
+                    if (hasConstructorWithIWebElementParam || hasPropertyWithIWebElementType)
                     {
-                        var webElement = DispatchProxy.Create<IWebElement, ResolverDecorator<IWebElement>>();
-                        var decorator = (ResolverDecorator<IWebElement>)webElement;
+                        webElement = DispatchProxy.Create<IWebElement, ResolverDecorator<IWebElement>>();
 
-                        decorator.Init(() => FindElement(webDriver, getParentWebElement(), member.FindBy.First(), member.Wait));
-
-                        constructorParams = new object[] { webElement };
+                        ((ResolverDecorator<IWebElement>)webElement)
+                            .Init(() => FindElement(webDriver, getParentWebElement(), member.FindBy.First(), member.Wait));
                     }
 
+                    if (hasConstructorWithIWebElementParam)
+                        constructorParams = new object[] { webElement };
+
                     var element = Activator.CreateInstance(member.MemberType, constructorParams);
+
+                    if (hasPropertyWithIWebElementType)
+                        propertyWithIWebElementType.SetValue(element, webElement);
 
                     Bind(
                         element,
