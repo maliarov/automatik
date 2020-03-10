@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
@@ -56,21 +59,62 @@ namespace Automatik
             throw new Exception("Unsupported web element type.");
         }
 
-        public static object GetAttribute(this IWebElement webElement, string name)
+        public static string[] GetCssClasses(this IWebElement webElement)
+        {   
+
+            var classAttrValue = webElement.GetAttribute("class");
+            
+            if (string.IsNullOrWhiteSpace(classAttrValue))
+                return new string[0];
+
+            return classAttrValue.Trim().Split(" ").ToArray();
+        }
+
+        public static string[] GetAttributesNames(this IWebElement webElement)
         {
             var driver = (RemoteWebDriver)webElement.GetWebDriver();
 
-            return driver.ExecuteScript("arguments[0].getAttribute(arguments[1])", webElement, name);
+            if (webElement is ResolverDecorator<IWebElement> resolverDecorator)
+                webElement = resolverDecorator.Value;
+
+            var jsArray = (ReadOnlyCollection<object>)driver.ExecuteScript(@"
+                var attributes = arguments[0].attributes;
+                var attributesNames = [];
+
+                for (var index = 0; index < attributes.length; index++) {
+                    attributesNames.push(attributes[index].nodeName);
+                }
+                
+                return attributesNames;
+            ", webElement);
+
+            return jsArray
+                .Select(item => (string)item)
+                .ToArray();
         }
 
-        public static void SetAttribute(this IWebElement webElement, string name, string value)
+        public static IDictionary<string, string> GetAttributes(this IWebElement webElement)
         {
             var driver = (RemoteWebDriver)webElement.GetWebDriver();
 
-            driver.ExecuteScript("arguments[0].setAttribute(arguments[1], arguments[2]);", webElement, name, value);
+            if (webElement is ResolverDecorator<IWebElement> resolverDecorator)
+                webElement = resolverDecorator.Value;
+
+            var jsArray = (ReadOnlyCollection<object>)driver.ExecuteScript(@"
+                var attributes = arguments[0].attributes;
+                var attributesPairs = [];
+
+                for (var index = 0; index < attributes.length; index++) {
+                    attributesPairs.push([attributes[index].nodeName, attributes[index].value]);
+                }
+                
+                return attributesPairs;
+            ", webElement);
+
+            return jsArray
+                .Select(item => (ReadOnlyCollection<object>)item)
+                .ToDictionary(item => (string)item.First(), item => (string)item.Last());
         }
-
-
     }
 
 
