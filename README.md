@@ -64,7 +64,8 @@ Do some homework and review following attributes and their variants:
 For classes:
 ```
 [Page]
-[Page(Url="http://my-page-url/{type}?{skip}&{limit}")]
+[Page(Url="http://my-page-url")]
+[Page(Url="http://my-page-url/{type}?{skip}&{limit}")] // check TPage IWebDriver.Navigate<TPage>(object? options = null) for that
 [Page(UrlProvider=typeof(MyUrlProvider))] // where MyUrlProvider implments IUrlProvider
 ```
 
@@ -85,7 +86,7 @@ Also pay some attention for IWebDriver extensions methods:
     TPage IWebDriver.Bind<TPage>(TPage page);
 
     TPage IWebDriver.Navigate<TPage>(string url);
-    TPage IWebDriver.Navigate<TPage>(object? options = null); // new object { type = "cars", skip = 1, limit = 14 }
+    TPage IWebDriver.Navigate<TPage>(object? options = null); // new { type = "cars", skip = 1, limit = 14 }
 ```
 
 But real magic comes to stage when you start using more complex types for mapping:
