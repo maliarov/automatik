@@ -6,7 +6,7 @@ using OpenQA.Selenium;
 
 namespace Automatik
 {
-    public static class To
+    public static class ElementTo
     {
         public static Func<Func<IWebElement>, bool> Exist() =>
             (resolve) => Utils.safeResolve(() => resolve() != null && resolve().TagName != null, false);
@@ -147,25 +147,5 @@ namespace Automatik
             (resolve) => Utils.safeResolve(() => resolve().GetCssClasses().Any(className => matcher.IsMatch(className)), false);
         public static Func<Func<IWebElement>, bool> NotHaveClassThatMatches(Regex matcher) =>
             (resolve) => Utils.safeResolve(() => resolve().GetCssClasses().All(className => !matcher.IsMatch(className)), false);
-
-
-
-        public static Func<Func<IEnumerable<IWebElement>>, bool> HaveCountInRange(int? Min, int? Max) {
-            if (Min.HasValue && Max.HasValue && Min > Max)
-                throw new Exception("[Min] param should be less or equal to [Max] param");
-            
-            return (resolve) => Utils.safeResolve(() =>             
-            {
-                var count = resolve().Count();
-
-                if (Min.HasValue && count < Min.Value)
-                    return false;
-
-                if (Max.HasValue && Max.Value < count)
-                    return false;
-
-                return true;
-            }, false);
-        }
     }
 }

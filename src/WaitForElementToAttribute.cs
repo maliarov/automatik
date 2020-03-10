@@ -15,49 +15,49 @@ namespace Automatik
     public class WaitForElementExistanceAttribute : WaitForElementToAttribute
     {
         public WaitForElementExistanceAttribute()
-            : base(To.Exist()) { }
+            : base(ElementTo.Exist()) { }
     }
 
     public class WaitForElementToBecomeSelectedAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeSelectedAttribute()
-            : base(To.BecomeSelected()) { }
+            : base(ElementTo.BecomeSelected()) { }
     }
 
     public class WaitForElementToBecomeNotSelectedAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeNotSelectedAttribute()
-            : base(To.BecomeNotSelected()) { }
+            : base(ElementTo.BecomeNotSelected()) { }
     }
 
     public class WaitForElementToBecomeDisplayedAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeDisplayedAttribute()
-            : base(To.BecomeDisplayed()) { }
+            : base(ElementTo.BecomeDisplayed()) { }
     }
 
     public class WaitForElementToBecomeHiddenAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeHiddenAttribute()
-            : base(To.BecomeHidden()) { }
+            : base(ElementTo.BecomeHidden()) { }
     }
 
     public class WaitForElementToBecomeEnabledAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeEnabledAttribute()
-            : base(To.BecomeEnabled()) { }
+            : base(ElementTo.BecomeEnabled()) { }
     }
 
     public class WaitForElementToBecomeDisabledAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeDisabledAttribute()
-            : base(To.BecomeDisabled()) { }
+            : base(ElementTo.BecomeDisabled()) { }
     }
 
     public class WaitForElementToBecomeClickableAttribute : WaitForElementToAttribute
     {
         public WaitForElementToBecomeClickableAttribute()
-            : base(To.BecomeClickable()) { }
+            : base(ElementTo.BecomeClickable()) { }
     }
 
 
@@ -65,61 +65,61 @@ namespace Automatik
     public class WaitForElementToHaveAttributeWithNameAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithNameAttribute(string Name)
-            : base(To.HaveAttributeWithName(Name)) { }
+            : base(ElementTo.HaveAttributeWithName(Name)) { }
     }
 
     public class WaitForElementToNotHaveAttributeWithNameAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveAttributeWithNameAttribute(string Name)
-            : base(To.NotHaveAttributeWithName(Name)) { }
+            : base(ElementTo.NotHaveAttributeWithName(Name)) { }
     }
 
     public class WaitForElementToHaveAttributeWithNameThatContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithNameThatContainsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithNameThatContains(Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithNameThatContains(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveAttributeWithNameThatContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveAttributeWithNameThatContainsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveAttributeWithNameThatContains(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveAttributeWithNameThatContains(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithNameThatStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithNameThatStartsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithNameThatStartsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithNameThatStartsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveAttributeWithNameThatStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveAttributeWithNameThatStartsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveAttributeWithNameThatStartsWith(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveAttributeWithNameThatStartsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithNameThatEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithNameThatEndsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithNameThatEndsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithNameThatEndsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveAttributeWithNameThatEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveAttributeWithNameThatEndsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveAttributeWithNameThatEndsWith(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveAttributeWithNameThatEndsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithNameThatMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithNameThatMatchesAttribute(Regex Matcher)
-            : base(To.HaveAttributeWithNameThatMatches(Matcher)) { }
+            : base(ElementTo.HaveAttributeWithNameThatMatches(Matcher)) { }
     }
 
     public class WaitForElementToNotHaveAttributeWithNameThatMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveAttributeWithNameThatMatchesAttribute(Regex Matcher)
-            : base(To.NotHaveAttributeWithNameThatMatches(Matcher)) { }
+            : base(ElementTo.NotHaveAttributeWithNameThatMatches(Matcher)) { }
     }
 
 
@@ -127,61 +127,61 @@ namespace Automatik
     public class WaitForElementToHaveAttributeWithValueThatContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatContainsAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatContains(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatContains(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatNotContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatNotContainsAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatNotContains(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatNotContains(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatStartsWithAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatStartsWith(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatStartsWith(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatNotStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatNotStartsWithAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatNotStartsWith(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatNotStartsWith(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatEndsWithAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatEndsWith(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatEndsWith(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatNotEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatNotEndsWithAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatNotEndsWith(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatNotEndsWith(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatEqualsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatEqualsAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatEquals(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatEquals(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatNotEqualsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatNotEqualsAttribute(string Name, string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveAttributeWithValueThatNotEquals(Name, Value, ComparisonType)) { }
+            : base(ElementTo.HaveAttributeWithValueThatNotEquals(Name, Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatMatchesAttribute(string Name, Regex Matcher)
-            : base(To.HaveAttributeWithValueThatMatches(Name, Matcher)) { }
+            : base(ElementTo.HaveAttributeWithValueThatMatches(Name, Matcher)) { }
     }
 
     public class WaitForElementToHaveAttributeWithValueThatNotMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveAttributeWithValueThatNotMatchesAttribute(string Name, Regex Matcher)
-            : base(To.HaveAttributeWithValueThatNotMatches(Name, Matcher)) { }
+            : base(ElementTo.HaveAttributeWithValueThatNotMatches(Name, Matcher)) { }
     }
 
 
@@ -189,79 +189,79 @@ namespace Automatik
     public class WaitForElementToHaveTextAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextAttribute()
-            : base(To.HaveText()) { }
+            : base(ElementTo.HaveText()) { }
     }
 
     public class WaitForElementToNotHaveTextAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveTextAttribute()
-            : base(To.NotHaveText()) { }
+            : base(ElementTo.NotHaveText()) { }
     }
 
     public class WaitForElementToHaveTextNotEmptyOrWhiteSpacesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextNotEmptyOrWhiteSpacesAttribute()
-            : base(To.HaveTextNotEmptyOrWhiteSpaces()) { }
+            : base(ElementTo.HaveTextNotEmptyOrWhiteSpaces()) { }
     }
 
     public class WaitForElementToHaveTextThatEqualsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatEqualsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveTextThatEquals(Value, ComparisonType)) { }
+            : base(ElementTo.HaveTextThatEquals(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveTextThatEqualsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveTextThatEqualsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveTextThatEquals(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveTextThatEquals(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveTextThatContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatContainsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveTextThatContains(Value, ComparisonType)) { }
+            : base(ElementTo.HaveTextThatContains(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveTextThatNotContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatNotContainsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveTextThatNotContains(Value, ComparisonType)) { }
+            : base(ElementTo.HaveTextThatNotContains(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveTextThatStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatStartsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveTextThatStartsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveTextThatStartsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveTextThatNotStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatNotStartsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveTextThatNotStartsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveTextThatNotStartsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveTextThatEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatEndsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveTextThatEndsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveTextThatEndsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveTextThatNotEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatNotEndsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveTextThatNotEndsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveTextThatNotEndsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveTextThatMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatMatchesAttribute(string Value, Regex Matcher)
-            : base(To.HaveTextThatMatches(Value, Matcher)) { }
+            : base(ElementTo.HaveTextThatMatches(Value, Matcher)) { }
     }
 
     public class WaitForElementToHaveTextThatNotMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveTextThatNotMatchesAttribute(string Value, Regex Matcher)
-            : base(To.HaveTextThatNotMatches(Value, Matcher)) { }
+            : base(ElementTo.HaveTextThatNotMatches(Value, Matcher)) { }
     }
 
 
@@ -269,61 +269,61 @@ namespace Automatik
     public class WaitForElementToHaveClassAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveClassAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveClass(Value, ComparisonType)) { }
+            : base(ElementTo.HaveClass(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveClassAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveClassAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveClass(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveClass(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveClassThatContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveClassThatContainsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveClassThatContains(Value, ComparisonType)) { }
+            : base(ElementTo.HaveClassThatContains(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveClassThatContainsAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveClassThatContainsAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveClassThatContains(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveClassThatContains(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveClassThatStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveClassThatStartsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveClassThatStartsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveClassThatStartsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveClassThatStartsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveClassThatStartsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveClassThatStartsWith(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveClassThatStartsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveClassThatEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveClassThatEndsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.HaveClassThatEndsWith(Value, ComparisonType)) { }
+            : base(ElementTo.HaveClassThatEndsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToNotHaveClassThatEndsWithAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveClassThatEndsWithAttribute(string Value, StringComparison ComparisonType = StringComparison.Ordinal)
-            : base(To.NotHaveClassThatEndsWith(Value, ComparisonType)) { }
+            : base(ElementTo.NotHaveClassThatEndsWith(Value, ComparisonType)) { }
     }
 
     public class WaitForElementToHaveClassThatMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToHaveClassThatMatchesAttribute(Regex Matcher)
-            : base(To.HaveClassThatMatches(Matcher)) { }
+            : base(ElementTo.HaveClassThatMatches(Matcher)) { }
     }
 
     public class WaitForElementToNotHaveClassThatMatchesAttribute : WaitForElementToAttribute
     {
         public WaitForElementToNotHaveClassThatMatchesAttribute(Regex Matcher)
-            : base(To.NotHaveClassThatMatches(Matcher)) { }
+            : base(ElementTo.NotHaveClassThatMatches(Matcher)) { }
     }
 
 }

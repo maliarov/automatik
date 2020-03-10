@@ -4,12 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
 
 namespace Automatik
 {
-    public static class WebDriverExtensions
+    public static class PageExtensions
     {
         private static readonly Regex UrlPlaceHoldersMatcher = new Regex(@"\{(?<placeholder>.[^}]*)\}");
         public static TPage Navigate<TPage>(this IWebDriver webDriver, string url) where TPage : class
@@ -167,7 +166,7 @@ namespace Automatik
                 return findElementByContext();
 
             var timeout = waitElementAtrributes.Max(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
-            var wait = webDriver.WaitAllWithTimeout(waitElementAtrributes.Select(attr => attr.Condition));
+            var wait = webDriver.WaitAll(waitElementAtrributes.Select(attr => attr.Condition));
 
             wait(findElementByContext, timeout);
 
@@ -212,7 +211,7 @@ namespace Automatik
             var elementTimeouts = waitElementAtrributes.Select(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
             var timeout = elementsTimeouts.Union(elementTimeouts).Max();
 
-            var wait = webDriver.WaitAllWithTimeout(
+            var wait = webDriver.WaitAll(
                 waitElementsAtrributes.Select(attr => attr.Condition),
                 waitElementAtrributes.Select(attr => attr.Condition)
             );
@@ -375,92 +374,6 @@ namespace Automatik
                 throw new Exception($"[{member.Name}] field can not be mapped because it is not: IWebElement, IEnumerable<IWebElement>. Class or IEnumerable<Class> with default constructor or IWebElement constructor param.");
             }
         }
-
-
-        public static Action<Func<IWebElement>, TimeSpan> WaitAllWithTimeout(
-            this IWebDriver webDriver,
-            IEnumerable<Func<Func<IWebElement>, bool>> conditions
-        ) =>
-            (resolve, timeout) =>
-            {
-                var wait = new WebDriverWait(webDriver, timeout);
-                wait.Until((_) =>
-                    conditions.All(condition => condition(resolve))
-                );
-            };
-
-        public static Action<Func<IWebElement>, TimeSpan> WaitAllWithTimeout(
-            this IWebDriver webDriver,
-            params Func<Func<IWebElement>, bool>[] conditions
-        ) => webDriver.WaitAllWithTimeout((IEnumerable<Func<Func<IWebElement>, bool>>)conditions);
-
-        public static Action<Func<IWebElement>> WaitAll(
-            this IWebDriver webDriver,
-            IEnumerable<Func<Func<IWebElement>, bool>> conditions
-        )
-        {
-            var wait = webDriver.WaitAllWithTimeout(conditions);
-            return (resolve) => wait(resolve, webDriver.Manage().Timeouts().ImplicitWait);
-        }
-
-        public static Action<Func<IWebElement>> WaitAll(
-            this IWebDriver webDriver,
-            params Func<Func<IWebElement>, bool>[] conditions
-        ) => webDriver.WaitAll((IEnumerable<Func<Func<IWebElement>, bool>>)conditions);
-
-
-        public static Action<Func<IEnumerable<IWebElement>>, TimeSpan> WaitAllWithTimeout(
-            this IWebDriver webDriver,
-            IEnumerable<Func<Func<IEnumerable<IWebElement>>, bool>> groupConditions,
-            IEnumerable<Func<Func<IWebElement>, bool>> individualConditions
-        ) =>
-            (resolve, timeout) =>
-            {
-                var wait = new WebDriverWait(webDriver, timeout);
-                wait.Until((_) =>
-                    groupConditions.All(condition => condition(resolve)) &&
-                    resolve().All(webElement => individualConditions.All(condition => condition(() => webElement)))
-                );
-            };
-
-        public static Func<IEnumerable<Func<Func<IWebElement>, bool>>, Action<Func<IEnumerable<IWebElement>>, TimeSpan>> WaitAllWithTimeout(
-            this IWebDriver webDriver,
-            IEnumerable<Func<Func<IEnumerable<IWebElement>>, bool>> groupConditions
-        ) =>
-            (IEnumerable<Func<Func<IWebElement>, bool>> individualConditions) =>
-                (resolve, timeout) =>
-                {
-                    var wait = new WebDriverWait(webDriver, timeout);
-                    wait.Until((_) =>
-                        groupConditions.All(condition => condition(resolve)) &&
-                        resolve().All(webElement => individualConditions.All(condition => condition(() => webElement)))
-                    );
-                };
-
-
-        public static Action<Func<IEnumerable<IWebElement>>> WaitAll(
-            this IWebDriver webDriver,
-            IEnumerable<Func<Func<IEnumerable<IWebElement>>, bool>> groupConditions,
-            IEnumerable<Func<Func<IWebElement>, bool>> individualConditions
-        )
-        {
-            var wait = webDriver.WaitAllWithTimeout(groupConditions, individualConditions);
-            return (resolve) => wait(resolve, webDriver.Manage().Timeouts().ImplicitWait);
-        }
-
-        public static Func<IEnumerable<Func<Func<IWebElement>, bool>>, Action<Func<IEnumerable<IWebElement>>>> WaitAll(
-            this IWebDriver webDriver,
-            IEnumerable<Func<Func<IEnumerable<IWebElement>>, bool>> groupConditions
-        ) =>
-            (IEnumerable<Func<Func<IWebElement>, bool>> individualConditions) =>
-            {
-
-                var wait = webDriver.WaitAllWithTimeout(groupConditions, individualConditions);
-                return (resolve) => wait(resolve, webDriver.Manage().Timeouts().ImplicitWait);
-            };
-
-
-
     }
 
 }
