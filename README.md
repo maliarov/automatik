@@ -273,3 +273,6 @@ if (text != "1, 2, 3, 4, 5")
 
 Feel free to experiment with IWebDriver.WaitAll or IWebDriver.WaitAny extensions methods and conditions provided by ElementTo and ElementsTo classes.
 
+
+___
+May the Force be with you!
