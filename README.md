@@ -65,7 +65,7 @@ For classes:
 ```
 [Page]
 [Page(Url="http://my-page-url")]
-[Page(Url="http://my-page-url/{type}?{skip}&{limit}")] // check TPage IWebDriver.Navigate<TPage>(object? options = null) for that
+[Page(Url="http://my-page-url/{type}?{skip}&{limit}")] // check IWebDriver.Navigate<TPage>(object? options = null) for that
 [Page(UrlProvider=typeof(MyUrlProvider))] // where MyUrlProvider implments IUrlProvider
 ```
 
