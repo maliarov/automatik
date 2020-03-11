@@ -161,12 +161,12 @@ namespace Automatik
             IEnumerable<WaitAttribute> waitAttributes
         )
         {
-            var waitElementAtrributes = waitAttributes?.Where(attr => attr is WaitForElementAttribute).Cast<WaitForElementAttribute>();
-            if (waitElementAtrributes == null || !waitElementAtrributes.Any())
+            var waitElementAttributes = waitAttributes?.Where(attr => attr is WaitForElementAttribute).Cast<WaitForElementAttribute>();
+            if (waitElementAttributes == null || !waitElementAttributes.Any())
                 return findElementByContext();
 
-            var timeout = waitElementAtrributes.Max(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
-            var wait = webDriver.WaitAll(waitElementAtrributes.Select(attr => attr.Condition));
+            var timeout = waitElementAttributes.Max(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var wait = webDriver.WaitAll(waitElementAttributes.Select(attr => attr.Condition));
 
             wait(findElementByContext, timeout);
 
@@ -193,27 +193,27 @@ namespace Automatik
             IEnumerable<WaitAttribute> waitAttributes
         )
         {
-            var waitElementsAtrributes = waitAttributes?
+            var waitElementsAttributes = waitAttributes?
                 .Where(attr => attr is WaitForElementsAttribute)
                 .Cast<WaitForElementsAttribute>();
 
-            var waitElementAtrributes = waitAttributes?
+            var waitElementAttributes = waitAttributes?
                 .Where(attr => attr is WaitForElementAttribute)
                 .Cast<WaitForElementAttribute>();
 
             if (
-                (waitElementsAtrributes == null || !waitElementsAtrributes.Any()) &&
-                (waitElementAtrributes == null || !waitElementAtrributes.Any())
+                (waitElementsAttributes == null || !waitElementsAttributes.Any()) &&
+                (waitElementAttributes == null || !waitElementAttributes.Any())
             )
                 return findElementsByContext();
 
-            var elementsTimeouts = waitElementsAtrributes.Select(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
-            var elementTimeouts = waitElementAtrributes.Select(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var elementsTimeouts = waitElementsAttributes.Select(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
+            var elementTimeouts = waitElementAttributes.Select(waitUntil => waitUntil.GetTimeout() ?? webDriver.Manage().Timeouts().ImplicitWait);
             var timeout = elementsTimeouts.Union(elementTimeouts).Max();
 
             var wait = webDriver.WaitAll(
-                waitElementsAtrributes.Select(attr => attr.Condition),
-                waitElementAtrributes.Select(attr => attr.Condition)
+                waitElementsAttributes.Select(attr => attr.Condition),
+                waitElementAttributes.Select(attr => attr.Condition)
             );
 
             wait(findElementsByContext, timeout);
@@ -364,7 +364,7 @@ namespace Automatik
                     Bind(
                         element,
                         webDriver,
-                        () => FindElement(webDriver, getParentWebElement(), member.FindBy.First(), member.Wait)
+                        () => webElement ?? FindElement(webDriver, getParentWebElement(), member.FindBy.First(), member.Wait)
                     );
 
                     member.SetValue(element);
