@@ -133,7 +133,7 @@ public class PopupContainer
 
 public class Table<TRow>
 {
-    [FindByCssSelector("tbody > tr")]
+    [FindByCssSelector("tbody>tr")]
     public IEnumerable<TRow> Rows;
 }
 
@@ -179,7 +179,7 @@ In  our next example we will have license accept modal that will popups on out p
 [Page]
 public class MyPage 
 {
-    [FindByCssSelector("div.modal#license-agreement)]
+    [FindByCssSelector("div.modal#license-agreement")]
     [WaitForElementBecomeDisplayed(TimeoutInterval = 10)]
     public Modal<TextBody, YesNoFooter> LicenseAgreementModal;
 }
